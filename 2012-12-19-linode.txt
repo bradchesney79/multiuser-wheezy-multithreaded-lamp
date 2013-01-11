@@ -1,0 +1,1846 @@
+My updated notes follow:
+
+Many thanks to the patient souls in #debian and #apache on Freenode
+Many commands and much info stolen from these locations:
+http://www.rackaid.com/resources/linux-screen-tutorial-and-how-to/
+http://www.debian.org/releases/testing/amd64/release-notes/ch-upgrading.en.html#newkernel
+https://sites.google.com/site/mydebiansourceslist/
+http://linux.justinhartman.com/Setting_up_a_LAMP_Server
+http://www.debian-administration.org/articles/349
+http://www.lavluda.com/2008/02/02/install-imagemagick-support-to-your-debianubuntu-server/
+http://php.net/manual/en/imagick.setup.php
+http://www.lavluda.com/2007/07/15/how-to-enable-mod_rewrite-in-apache22-debian/
+http://www.debian-administration.org/articles/284
+http://openvpn.net/archive/openvpn-users/2004-05/msg00355.html
+http://wiki.apache.org/httpd/RemoveSSLCertPassPhrase
+http://httpd.apache.org/docs/2.2/vhosts/examples.html
+http://www.youtube.com/watch?v=dtclmj3H7ZU
+http://www.youtube.com/watch?v=FLPx7HLLteI
+http://wiki.debian.org/SELinux/Setup#Steps_to_setup_SELinux
+http://dev.mysql.com/doc/refman/5.0/en/mysql-secure-installation.html
+http://www.mysqlperformanceblog.com/2009/01/28/the-perils-of-innodb-with-debian-and-startup-scripts/
+
+Base debian 6 32-bit linode.com Virtual Private Server install
+
+(On linode build images, the ssh package is preinstalled for you.
+
+apt-get install ssh
+on the server for everyone else without it.
+
+ifconfig
+to get your IP address. ~~~~~192.168.100.23~~~~~
+You may only have access via the local network at that address. Google "NAT")
+
+login via ssh as root
+ssh root@012.345.678.910
+
+get the screen program
+apt-get install screen
+
+start the screen window program
+screen
+
+Basic screen command line commands
+
+start the screen window program
+screen
+
+see running screen windows
+screen -ls
+
+reattach to a screen window
+screen -r <pid.connection.hostname>
+(your pid.connection.hostname will vary)
+
+Basic screen keybindings
+
+create an additional window in screen
+CTRL+a+c
+
+switch to the next window in the forward direction
+CTRL+a+n
+
+switch to the next window in the forward direction
+CTRL+a+p
+
+see a list of windows
+CTRL+a+w
+
+switch to a specific window
+CTRL+a+"
+(" = SHIFT+')
+
+kill the current window
+CTRL+a+k
+(if it is the last window, screen will close and return you to the command line)
+
+detatch from all windows leaving screen running and return to the command line
+CTRL+a+d
+
+once screen is up update and upgrade the system
+apt-get update
+apt-get upgrade
+
+install the kernel metapackage
+apt-get install linux-image-2.6.32-5-686
+
+(apt-get install linux-image-2.6.32-5-amd64 for AMD64 based 64-bit machines)
+
+test that the new kernel metapackage is installed (pray you see output)
+dpkg -l "linux-image*" | grep ^ii
+
+I get one line that starts with "ii" followed by the package name, the dotted numeric version, and a short text description.
+
+verify everything is in good order (no output is what you want)
+dpkg --audit
+aptitude search "~ahold"
+apt-get clean
+
+reboot
+
+edit /etc/apt/sources.list
+vi /etc/apt/sources.list
+
+My sources is as follows:
+
+#
+
+# deb cdrom:[Debian GNU/Linux 6.0.3 _Squeeze_ - Official i386 NETINST Binary-1 20111008-19:55]/ squeeze main
+
+#deb cdrom:[Debian GNU/Linux 6.0.3 _Squeeze_ - Official i386 NETINST Binary-1 20111008-19:55]/ squeeze main
+
+#deb http://ftp.us.debian.org/debian/ squeeze main
+#deb-src http://ftp.us.debian.org/debian/ squeeze main
+
+#deb http://security.debian.org/ squeeze/updates main
+#deb-src http://security.debian.org/ squeeze/updates main
+
+# squeeze-updates, previously known as 'volatile'
+#deb http://ftp.us.debian.org/debian/ squeeze-updates main
+#deb-src http://ftp.us.debian.org/debian/ squeeze-updates main
+
+###################
+## Debian Testing ##
+###################
+# Testing
+deb http://ftp.debian.org/debian/ testing main contrib non-free
+deb-src http://ftp.debian.org/debian/ testing main contrib non-free
+
+###################
+## Debian Wheezy ##
+###################
+#deb http://ftp.debian.org/debian/ wheezy main contrib non-free
+#deb-src http://ftp.debian.org/debian/ wheezy main contrib non-free
+
+# Testing Security  http://secure-testing-master.debian.net/
+deb http://security.debian.org wheezy/updates main contrib non-free
+deb-src http://security.debian.org wheezy/updates main contrib non-free	
+
+update the system
+apt-get update
+
+run a distribution upgrade
+apt-get dist-upgrade
+
+
+
+you will be presented with distribution upgrade notes:
+
+q (will exit the less program)
+
+
+You will be presented with a choice of automatically restarting services
+
+ │ There are services installed on your system which need to be restarted when certain libraries, such as libpam, libc,    │ 
+ │ and libssl, are upgraded. Since these restarts may cause interruptions of service for the system, you will normally be  │ 
+ │ prompted on each upgrade for the list of services you wish to restart.  You can choose this option to avoid being       │ 
+ │ prompted; instead, all necessary restarts will be done for you automatically so you can avoid being asked questions on  │ 
+ │ each library upgrade.                                                                                                   │ 
+ │                                                                                                                         │ 
+ │ Restart services during package upgrades without asking?                                                                │ 
+ │                                                                                                                         │ 
+ │                                    <Yes>                                       <No>                           
+
+I chose yes and hit <Enter>
+
+
+Configuration file `/etc/default/rc'
+ ==> File on system created by you or by a script.
+ ==> File also in package provided by package maintainer.
+   What would you like to do about it ?  Your options are:
+    Y or I  : install the package maintainer's version
+    N or O  : keep your currently-installed version
+      D     : show the differences between the versions
+      Z     : start a shell to examine the situation
+ The default action is to keep your current version.
+*** rcS (Y/I/N/O/D/Z) [default=N] ? 
+
+I hit <Enter> to choose the default
+
+
+ │ The new Linux kernel version provides different drivers for some PATA (IDE) controllers. The names of some hard disk,   │  
+ │ CD-ROM, and tape devices may change.                                                                                    │  
+ │                                                                                                                         │  
+ │ It is now recommended to identify disk devices in configuration files by label or UUID (unique identifier) rather than  │  
+ │ by device name, which will work with both old and new kernel versions.                                                  │  
+ │                                                                                                                         │  
+ │ If you choose to not update the system configuration automatically, you must update device IDs yourself before the      │  
+ │ next system reboot or the system may become unbootable.                                                                 │  
+ │                                                                                                                         │  
+ │ Update disk device IDs in system configuration?                                                                         │  
+ │                                                                                                                         │  
+ │                                    <Yes>                                       <No>                                     │  
+ │                                                                                                                         │                                                                                                                                       
+   
+I chose Yes and hit <Enter>
+   
+   
+  │                                                                                                                        │  
+  │ Boot loader configuration check needed                                                                                 │  
+  │                                                                                                                        │  
+  │ The boot loader configuration for this system was not recognized. These settings in the configuration may need to be   │  
+  │ updated:                                                                                                               │  
+  │                                                                                                                        │  
+  │  * The root device ID passed as a kernel parameter;                                                                    │  
+  │  * The boot device ID used to install and update the boot loader.                                                      │  
+  │                                                                                                                        │  
+  │                                                                                                                        │  
+  │ You should generally identify these devices by UUID or label. However, on MIPS systems the root device must be         │  
+  │ identified by name.                                                                                                    │  
+  │                                                                                                                        │  
+  │                                                         <Ok>                                                           │  
+  │                                                                                                                        │                       
+
+I hit <Enter> to choose Ok and continue
+
+
+Configuration file `/etc/dhcp/dhclient.conf'
+ ==> Modified (by you or by a script) since installation.
+ ==> Package distributor has shipped an updated version.
+   What would you like to do about it ?  Your options are:
+    Y or I  : install the package maintainer's version
+    N or O  : keep your currently-installed version
+      D     : show the differences between the versions
+      Z     : start a shell to examine the situation
+ The default action is to keep your current version.
+*** dhclient.conf (Y/I/N/O/D/Z) [default=N] ? 
+
+
+I hit <Enter> to choose the default
+
+
+reboot
+
+Start building the web server
+apt-get install apache2 php5 php5-fpm libapache2-mod-fcgid
+
+a2enmod fcgid rewrite ssl
+
+
+apt-get install php-pear imagemagick re2c libmagickwand-dev php5-dev make
+
+pear config-set preferred_state beta
+pecl install Imagick
+
+vi /etc/php5/apache2/php.ini
+(maybe
+vi /etc/php5/fpm/php.ini
+)
+
+(at line 213 for me)
+short_open_tag = Off
+
+(at line 674 for me)
+post_max_size = 12M
+
+(at line 802 for me)
+upload_max_filesize = 12M
+
+(at line 865 for me)
+extension = imagick.so
+
+(at line 1360 for me)
+session.cookie_secure = 1
+
+(at line 1391 for me)
+session.cookie_httponly = 1
+
+
+service apache2 restart
+
+vi /etc/apache2/ports.conf
+
+we need to ensure 
+my /etc/apache2/ports.conf reads as follows:
+
+# If you just change the port or add more ports here, you will likely also
+# have to change the VirtualHost statement in
+# /etc/apache2/sites-enabled/000-default
+# This is also true if you have upgraded from before 2.2.9-3 (i.e. from
+# Debian etch). See /usr/share/doc/apache2.2-common/NEWS.Debian.gz and
+# README.Debian.gz
+
+NameVirtualHost *:80
+Listen 80
+
+<IfModule mod_ssl.c>
+    # If you add NameVirtualHost *:443 here, you will also have to change
+    # the VirtualHost statement in /etc/apache2/sites-available/default-ssl
+    # to <VirtualHost *:443>
+    # Server Name Indication for SSL named virtual hosts is currently not
+    # supported by MSIE on Windows XP.
+    NameVirtualHost *:443
+    Listen 443
+</IfModule>
+
+<IfModule mod_gnutls.c>
+    NameVirtualHost *:443
+    Listen 443
+</IfModule>
+
+//UPDATE THESE
+
+set up the default virtual host configurations
+specifictally the virtualhosts for the default & default-ssl virtualhosts, the webroot locations, the log locations, and the ssl settings. 
+vi /etc/apache2/sites-available/default
+
+my /etc/apache2/sites-available/default reads as follows:
+
+<VirtualHost *:80>
+        ServerAdmin webmaster@localhost
+
+        DocumentRoot /var/www/default/http
+        <Directory />
+                Options FollowSymLinks
+                AllowOverride All
+        </Directory>
+        <Directory /var/www/default/http/>
+                Options Indexes FollowSymLinks MultiViews
+                AllowOverride None
+                Order allow,deny
+                allow from all
+        </Directory>
+
+        ScriptAlias /cgi-bin/ /usr/lib/cgi-bin/
+        <Directory "/usr/lib/cgi-bin">
+                AllowOverride None
+                Options +ExecCGI -MultiViews +SymLinksIfOwnerMatch
+                Order allow,deny
+                Allow from all
+        </Directory>
+
+	ErrorLog /var/www/default/logs/error_log
+
+	# Possible values include: debug, info, notice, warn, error, crit,
+	# alert, emerg.
+	LogLevel warn
+
+	CustomLog /var/www/default/logs/access_log combined
+</VirtualHost>
+
+
+likewise modify your default-ssl virtual host configuration
+vi /etc/apache2/sites-available/default-ssl
+
+my /etc/apache2/sites-available/default-ssl reads as follows:
+
+<IfModule mod_ssl.c>
+<VirtualHost *:443>
+        ServerAdmin webmaster@localhost
+
+        DocumentRoot /var/www/default/https
+        <Directory />
+                Options FollowSymLinks
+                AllowOverride All
+        </Directory>
+        <Directory /var/www/default/https>
+                Options Indexes FollowSymLinks MultiViews
+                AllowOverride None
+                Order allow,deny
+                allow from all
+        </Directory>
+
+        ScriptAlias /cgi-bin/ /usr/lib/cgi-bin/
+        <Directory "/usr/lib/cgi-bin">
+                AllowOverride None
+                Options +ExecCGI -MultiViews +SymLinksIfOwnerMatch
+                Order allow,deny
+                Allow from all
+        </Directory>
+
+	ErrorLog /var/www/default/logs/ssl_error_log
+
+	# Possible values include: debug, info, notice, warn, error, crit,
+	# alert, emerg.
+	LogLevel warn
+
+	CustomLog /var/www/default/logs/ssl_access_log combined
+
+        #   SSL Engine Switch:
+        #   Enable/Disable SSL for this virtual host.
+        SSLEngine on
+
+        #   A self-signed (snakeoil) certificate can be created by installing
+        #   the ssl-cert package. See
+        #   /usr/share/doc/apache2.2-common/README.Debian.gz for more info.
+        #   If both key and certificate are stored in the same file, only the
+        #   SSLCertificateFile directive is needed.
+        SSLCertificateFile    /var/www/default/certs/ssl-cert-snakeoil.pem
+        SSLCertificateKeyFile /var/www/default/certs/ssl-cert-snakeoil.key
+
+        #   Server Certificate Chain:
+        #   Point SSLCertificateChainFile at a file containing the
+        #   concatenation of PEM encoded CA certificates which form the
+        #   certificate chain for the server certificate. Alternatively
+        #   the referenced file can be the same as SSLCertificateFile
+        #   when the CA certificates are directly appended to the server
+        #   certificate for convinience.
+        #SSLCertificateChainFile /var/www/default/certs/server-ca.crt
+
+        #   Certificate Authority (CA):
+        #   Set the CA certificate verification path where to find CA
+        #   certificates for client authentication or alternatively one
+        #   huge file containing all of them (file must be PEM encoded)
+        #   Note: Inside SSLCACertificatePath you need hash symlinks
+        #         to point to the certificate files. Use the provided
+        #         Makefile to update the hash symlinks after changes.
+        #SSLCACertificatePath /var/www/default/certs/
+        #SSLCACertificateFile /var/www/default/certs/ca-bundle.crt
+
+        #   Certificate Revocation Lists (CRL):
+        #   Set the CA revocation path where to find CA CRLs for client
+        #   authentication or alternatively one huge file containing all
+        #   of them (file must be PEM encoded)
+        #   Note: Inside SSLCARevocationPath you need hash symlinks
+        #         to point to the certificate files. Use the provided
+        #         Makefile to update the hash symlinks after changes.
+        #SSLCARevocationPath /var/www/default/certs/
+        #SSLCARevocationFile /var/www/default/certs/ca-bundle.crl
+
+        #   Client Authentication (Type):
+        #   Client certificate verification type and depth.  Types are
+        #   none, optional, require and optional_no_ca.  Depth is a
+        #   number which specifies how deeply to verify the certificate
+        #   issuer chain before deciding the certificate is not valid.
+        #SSLVerifyClient require
+        #SSLVerifyDepth  10
+
+        #   Access Control:
+        #   With SSLRequire you can do per-directory access control based
+        #   on arbitrary complex boolean expressions containing server
+        #   variable checks and other lookup directives.  The syntax is a
+        #   mixture between C and Perl.  See the mod_ssl documentation
+        #   for more details.
+        #<Location />
+        #SSLRequire (    %{SSL_CIPHER} !~ m/^(EXP|NULL)/ \
+        #            and %{SSL_CLIENT_S_DN_O} eq "Snake Oil, Ltd." \
+        #            and %{SSL_CLIENT_S_DN_OU} in {"Staff", "CA", "Dev"} \
+        #            and %{TIME_WDAY} >= 1 and %{TIME_WDAY} <= 5 \
+        #            and %{TIME_HOUR} >= 8 and %{TIME_HOUR} <= 20       ) \
+        #           or %{REMOTE_ADDR} =~ m/^192\.76\.162\.[0-9]+$/
+        #</Location>
+
+        #   SSL Engine Options:
+        #   Set various options for the SSL engine.
+        #   o FakeBasicAuth:
+        #     Translate the client X.509 into a Basic Authorisation.  This means that
+        #     the standard Auth/DBMAuth methods can be used for access control.  The
+        #     user name is the `one line' version of the client's X.509 certificate.
+        #     Note that no password is obtained from the user. Every entry in the user
+        #     file needs this password: `xxj31ZMTZzkVA'.
+        #   o ExportCertData:
+        #     This exports two additional environment variables: SSL_CLIENT_CERT and
+        #     SSL_SERVER_CERT. These contain the PEM-encoded certificates of the
+        #     server (always existing) and the client (only existing when client
+        #     authentication is used). This can be used to import the certificates
+        #     into CGI scripts.
+        #   o StdEnvVars:
+        #     This exports the standard SSL/TLS related `SSL_*' environment variables.
+        #     Per default this exportation is switched off for performance reasons,
+        #     because the extraction step is an expensive operation and is usually
+        #     useless for serving static content. So one usually enables the
+        #     exportation for CGI and SSI requests only.
+        #   o StrictRequire:
+        #     This denies access when "SSLRequireSSL" or "SSLRequire" applied even
+        #     under a "Satisfy any" situation, i.e. when it applies access is denied
+        #     and no other module can change it.
+        #   o OptRenegotiate:
+        #     This enables optimized SSL connection renegotiation handling when SSL
+        #     directives are used in per-directory context.
+        #SSLOptions +FakeBasicAuth +ExportCertData +StrictRequire
+        <FilesMatch "\.(cgi|shtml|phtml|php)$">
+                SSLOptions +StdEnvVars
+        </FilesMatch>
+        <Directory /usr/lib/cgi-bin>
+                SSLOptions +StdEnvVars
+        </Directory>
+
+        #   SSL Protocol Adjustments:
+        #   The safe and default but still SSL/TLS standard compliant shutdown
+        #   approach is that mod_ssl sends the close notify alert but doesn't wait for
+        #   the close notify alert from client. When you need a different shutdown
+        #   approach you can use one of the following variables:
+        #   o ssl-unclean-shutdown:
+        #     This forces an unclean shutdown when the connection is closed, i.e. no
+        #     SSL close notify alert is send or allowed to received.  This violates
+        #     the SSL/TLS standard but is needed for some brain-dead browsers. Use
+        #     this when you receive I/O errors because of the standard approach where
+        #     mod_ssl sends the close notify alert.
+        #   o ssl-accurate-shutdown:
+        #     This forces an accurate shutdown when the connection is closed, i.e. a
+        #     SSL close notify alert is send and mod_ssl waits for the close notify
+        #     alert of the client. This is 100% SSL/TLS standard compliant, but in
+        #     practice often causes hanging connections with brain-dead browsers. Use
+        #     this only for browsers where you know that their SSL implementation
+        #     works correctly.
+        #   Notice: Most problems of broken clients are also related to the HTTP
+        #   keep-alive facility, so you usually additionally want to disable
+        #   keep-alive for those clients, too. Use variable "nokeepalive" for this.
+        #   Similarly, one has to force some clients to use HTTP/1.0 to workaround
+        #   their broken HTTP/1.1 implementation. Use variables "downgrade-1.0" and
+        #   "force-response-1.0" for this.
+        BrowserMatch "MSIE [2-6]" \
+                nokeepalive ssl-unclean-shutdown \
+                downgrade-1.0 force-response-1.0
+        # MSIE 7 and newer should be able to use keepalive
+        BrowserMatch "MSIE [17-9]" ssl-unclean-shutdown
+
+</VirtualHost>
+</IfModule>
+
+create the file system directory structure specified in the configuration files
+mkdir /var/www/default
+mkdir /var/www/default/http
+mkdir /var/www/default/https
+mkdir /var/www/default/certs
+mkdir /var/www/default/logs
+
+cd /var/www
+chown -R root:www-data *
+chmod -R 770 *
+chmod -R u+s *
+chmod -R g+s *
+
+optionally move or delete the default web page created upon installation
+mv /var/www/index.html /var/www/default/http
+
+make a backup of the default openssl settings
+cp /etc/ssl/openssl.cnf /etc/ssl/openssl.cnf~
+
+edit the /etc/ssl/openssl.cnf
+
+vi /etc/ssl/openssl.cnf
+
+(line 73)
+default_days    = 3650                  # how long to certify for
+(line 74)
+default_crl_days= 3650                  # how long before next CRL
+(line 129)
+countryName_default             = US
+(line 133)
+stateOrProvinceName_default     = Ohio
+(line 139)
+0.organizationName_default      = Rust Belt Rebellion
+(line 146)
+organizationalUnitName_default  = Web Hosting
+
+my /etc/ssl/openssl.cnf looks like this:
+
+#
+# OpenSSL example configuration file.
+# This is mostly being used for generation of certificate requests.
+#
+
+# This definition stops the following lines choking if HOME isn't
+# defined.
+HOME			= .
+RANDFILE		= $ENV::HOME/.rnd
+
+# Extra OBJECT IDENTIFIER info:
+#oid_file		= $ENV::HOME/.oid
+oid_section		= new_oids
+
+# To use this configuration file with the "-extfile" option of the
+# "openssl x509" utility, name here the section containing the
+# X.509v3 extensions to use:
+# extensions		= 
+# (Alternatively, use a configuration file that has only
+# X.509v3 extensions in its main [= default] section.)
+
+[ new_oids ]
+
+# We can add new OIDs in here for use by 'ca', 'req' and 'ts'.
+# Add a simple OID like this:
+# testoid1=1.2.3.4
+# Or use config file substitution like this:
+# testoid2=${testoid1}.5.6
+
+# Policies used by the TSA examples.
+tsa_policy1 = 1.2.3.4.1
+tsa_policy2 = 1.2.3.4.5.6
+tsa_policy3 = 1.2.3.4.5.7
+
+####################################################################
+[ ca ]
+default_ca	= CA_default		# The default ca section
+
+####################################################################
+[ CA_default ]
+
+dir		= ./demoCA		# Where everything is kept
+certs		= $dir/certs		# Where the issued certs are kept
+crl_dir		= $dir/crl		# Where the issued crl are kept
+database	= $dir/index.txt	# database index file.
+#unique_subject	= no			# Set to 'no' to allow creation of
+					# several ctificates with same subject.
+new_certs_dir	= $dir/newcerts		# default place for new certs.
+
+certificate	= $dir/cacert.pem 	# The CA certificate
+serial		= $dir/serial 		# The current serial number
+crlnumber	= $dir/crlnumber	# the current crl number
+					# must be commented out to leave a V1 CRL
+crl		= $dir/crl.pem 		# The current CRL
+private_key	= $dir/private/cakey.pem# The private key
+RANDFILE	= $dir/private/.rand	# private random number file
+
+x509_extensions	= usr_cert		# The extentions to add to the cert
+
+# Comment out the following two lines for the "traditional"
+# (and highly broken) format.
+name_opt 	= ca_default		# Subject Name options
+cert_opt 	= ca_default		# Certificate field options
+
+# Extension copying option: use with caution.
+# copy_extensions = copy
+
+# Extensions to add to a CRL. Note: Netscape communicator chokes on V2 CRLs
+# so this is commented out by default to leave a V1 CRL.
+# crlnumber must also be commented out to leave a V1 CRL.
+# crl_extensions	= crl_ext
+
+default_days	= 3650			# how long to certify for
+default_crl_days= 3650			# how long before next CRL
+default_md	= default		# use public key default MD
+preserve	= no			# keep passed DN ordering
+
+# A few difference way of specifying how similar the request should look
+# For type CA, the listed attributes must be the same, and the optional
+# and supplied fields are just that :-)
+policy		= policy_match
+
+# For the CA policy
+[ policy_match ]
+countryName		= match
+stateOrProvinceName	= match
+organizationName	= match
+organizationalUnitName	= optional
+commonName		= supplied
+emailAddress		= optional
+
+# For the 'anything' policy
+# At this point in time, you must list all acceptable 'object'
+# types.
+[ policy_anything ]
+countryName		= optional
+stateOrProvinceName	= optional
+localityName		= optional
+organizationName	= optional
+organizationalUnitName	= optional
+commonName		= supplied
+emailAddress		= optional
+
+####################################################################
+[ req ]
+default_bits		= 2048
+default_keyfile 	= privkey.pem
+distinguished_name	= req_distinguished_name
+attributes		= req_attributes
+x509_extensions	= v3_ca	# The extentions to add to the self signed cert
+
+# Passwords for private keys if not present they will be prompted for
+# input_password = secret
+# output_password = secret
+
+# This sets a mask for permitted string types. There are several options. 
+# default: PrintableString, T61String, BMPString.
+# pkix	 : PrintableString, BMPString (PKIX recommendation before 2004)
+# utf8only: only UTF8Strings (PKIX recommendation after 2004).
+# nombstr : PrintableString, T61String (no BMPStrings or UTF8Strings).
+# MASK:XXXX a literal mask value.
+# WARNING: ancient versions of Netscape crash on BMPStrings or UTF8Strings.
+string_mask = utf8only
+
+# req_extensions = v3_req # The extensions to add to a certificate request
+
+[ req_distinguished_name ]
+countryName			= Country Name (2 letter code)
+countryName_default		= US 
+countryName_min			= 2
+countryName_max			= 2
+
+stateOrProvinceName		= State or Province Name (full name)
+stateOrProvinceName_default	= Ohio
+
+localityName                    = Locality Name (eg, city)
+
+0.organizationName		= Organization Name (eg, company)
+0.organizationName_default	= Rust Belt Rebellion
+
+# we can do this but it is not needed normally :-)
+#1.organizationName		= Second Organization Name (eg, company)
+#1.organizationName_default	= World Wide Web Pty Ltd
+
+organizationalUnitName		= Organizational Unit Name (eg, section)
+organizationalUnitName_default	= Web Hosting
+
+commonName			= Common Name (e.g. server FQDN or YOUR name)
+commonName_max			= 64
+
+emailAddress			= Email Address
+emailAddress_max		= 64
+
+# SET-ex3			= SET extension number 3
+
+[ req_attributes ]
+challengePassword		= A challenge password
+challengePassword_min		= 4
+challengePassword_max		= 20
+
+unstructuredName		= An optional company name
+
+[ usr_cert ]
+
+# These extensions are added when 'ca' signs a request.
+
+# This goes against PKIX guidelines but some CAs do it and some software
+# requires this to avoid interpreting an end user certificate as a CA.
+
+basicConstraints=CA:FALSE
+
+# Here are some examples of the usage of nsCertType. If it is omitted
+# the certificate can be used for anything *except* object signing.
+
+# This is OK for an SSL server.
+# nsCertType			= server
+
+# For an object signing certificate this would be used.
+# nsCertType = objsign
+
+# For normal client use this is typical
+# nsCertType = client, email
+
+# and for everything including object signing:
+# nsCertType = client, email, objsign
+
+# This is typical in keyUsage for a client certificate.
+# keyUsage = nonRepudiation, digitalSignature, keyEncipherment
+
+# This will be displayed in Netscape's comment listbox.
+nsComment			= "OpenSSL Generated Certificate"
+
+# PKIX recommendations harmless if included in all certificates.
+subjectKeyIdentifier=hash
+authorityKeyIdentifier=keyid,issuer
+
+# This stuff is for subjectAltName and issuerAltname.
+# Import the email address.
+# subjectAltName=email:copy
+# An alternative to produce certificates that aren't
+# deprecated according to PKIX.
+# subjectAltName=email:move
+
+# Copy subject details
+# issuerAltName=issuer:copy
+
+#nsCaRevocationUrl		= http://www.domain.dom/ca-crl.pem
+#nsBaseUrl
+#nsRevocationUrl
+#nsRenewalUrl
+#nsCaPolicyUrl
+#nsSslServerName
+
+# This is required for TSA certificates.
+# extendedKeyUsage = critical,timeStamping
+
+[ v3_req ]
+
+# Extensions to add to a certificate request
+
+basicConstraints = CA:FALSE
+keyUsage = nonRepudiation, digitalSignature, keyEncipherment
+
+[ v3_ca ]
+
+
+# Extensions for a typical CA
+
+
+# PKIX recommendation.
+
+subjectKeyIdentifier=hash
+
+authorityKeyIdentifier=keyid:always,issuer
+
+# This is what PKIX recommends but some broken software chokes on critical
+# extensions.
+#basicConstraints = critical,CA:true
+# So we do this instead.
+basicConstraints = CA:true
+
+# Key usage: this is typical for a CA certificate. However since it will
+# prevent it being used as an test self-signed certificate it is best
+# left out by default.
+# keyUsage = cRLSign, keyCertSign
+
+# Some might want this also
+# nsCertType = sslCA, emailCA
+
+# Include email address in subject alt name: another PKIX recommendation
+# subjectAltName=email:copy
+# Copy issuer details
+# issuerAltName=issuer:copy
+
+# DER hex encoding of an extension: beware experts only!
+# obj=DER:02:03
+# Where 'obj' is a standard or added object
+# You can even override a supported extension:
+# basicConstraints= critical, DER:30:03:01:01:FF
+
+[ crl_ext ]
+
+# CRL extensions.
+# Only issuerAltName and authorityKeyIdentifier make any sense in a CRL.
+
+# issuerAltName=issuer:copy
+authorityKeyIdentifier=keyid:always
+
+[ proxy_cert_ext ]
+# These extensions should be added when creating a proxy certificate
+
+# This goes against PKIX guidelines but some CAs do it and some software
+# requires this to avoid interpreting an end user certificate as a CA.
+
+basicConstraints=CA:FALSE
+
+# Here are some examples of the usage of nsCertType. If it is omitted
+# the certificate can be used for anything *except* object signing.
+
+# This is OK for an SSL server.
+# nsCertType			= server
+
+# For an object signing certificate this would be used.
+# nsCertType = objsign
+
+# For normal client use this is typical
+# nsCertType = client, email
+
+# and for everything including object signing:
+# nsCertType = client, email, objsign
+
+# This is typical in keyUsage for a client certificate.
+# keyUsage = nonRepudiation, digitalSignature, keyEncipherment
+
+# This will be displayed in Netscape's comment listbox.
+nsComment			= "OpenSSL Generated Certificate"
+
+# PKIX recommendations harmless if included in all certificates.
+subjectKeyIdentifier=hash
+authorityKeyIdentifier=keyid,issuer
+
+# This stuff is for subjectAltName and issuerAltname.
+# Import the email address.
+# subjectAltName=email:copy
+# An alternative to produce certificates that aren't
+# deprecated according to PKIX.
+# subjectAltName=email:move
+
+# Copy subject details
+# issuerAltName=issuer:copy
+
+#nsCaRevocationUrl		= http://www.domain.dom/ca-crl.pem
+#nsBaseUrl
+#nsRevocationUrl
+#nsRenewalUrl
+#nsCaPolicyUrl
+#nsSslServerName
+
+# This really needs to be in place for it to be a proxy certificate.
+proxyCertInfo=critical,language:id-ppl-anyLanguage,pathlen:3,policy:foo
+
+####################################################################
+[ tsa ]
+
+default_tsa = tsa_config1	# the default TSA section
+
+[ tsa_config1 ]
+
+# These are used by the TSA reply generation only.
+dir		= ./demoCA		# TSA root directory
+serial		= $dir/tsaserial	# The current serial number (mandatory)
+crypto_device	= builtin		# OpenSSL engine to use for signing
+signer_cert	= $dir/tsacert.pem 	# The TSA signing certificate
+					# (optional)
+certs		= $dir/cacert.pem	# Certificate chain to include in reply
+					# (optional)
+signer_key	= $dir/private/tsakey.pem # The TSA private key (optional)
+
+default_policy	= tsa_policy1		# Policy if request did not specify it
+					# (optional)
+other_policies	= tsa_policy2, tsa_policy3	# acceptable policies (optional)
+digests		= md5, sha1		# Acceptable message digests (mandatory)
+accuracy	= secs:1, millisecs:500, microsecs:100	# (optional)
+clock_precision_digits  = 0	# number of digits after dot. (optional)
+ordering		= yes	# Is ordering defined for timestamps?
+				# (optional, default: no)
+tsa_name		= yes	# Must the TSA name be included in the reply?
+				# (optional, default: no)
+ess_cert_id_chain	= no	# Must the ESS cert id chain be included?
+				# (optional, default: no)
+
+
+cd /var/www/default/certs
+
+openssl req -new -x509 -extensions v3_ca -keyout ssl-cert-snakeoil.key -out ssl-cert-snakeoil.pem -days 3650 -config /etc/ssl/openssl.cnf
+Generating a 2048 bit RSA private key                                                         
+................................................................+++                           
+...................................................+++                                        
+writing new private key to 'ssl-cert-snakeoil.key'                                            
+Enter PEM pass phrase:                                                                        
+Verifying - Enter PEM pass phrase:                                                            
+-----                                                                                         
+You are about to be asked to enter information that will be incorporated                      
+into your certificate request.                                                                
+What you are about to enter is what is called a Distinguished Name or a DN.                   
+There are quite a few fields but you can leave some blank                                     
+For some fields there will be a default value,                                                
+If you enter '.', the field will be left blank.                                               
+-----                                                                                         
+Country Name (2 letter code) [US]:                                                            
+State or Province Name (full name) [Ohio]:
+Locality Name (eg, city) []:Eastlake
+Organization Name (eg, company) [Rust Belt Rebellion]:
+Organizational Unit Name (eg, section) []:Web Hosting
+Common Name (e.g. server FQDN or YOUR name) []:rustbeltrebellion.com
+Email Address []:bradchesney79@gmail.com
+
+
+remove the passphrase
+mv ssl-cert-snakeoil.key ssl-cert-snakeoil.key~
+openssl rsa -in ssl-cert-snakeoil.key~ -out ssl-cert-snakeoil.key
+
+enter the pass phrase
+passphrase<ENTER>
+
+restart apache, not reload
+a2ensite default-ssl
+service apache2 restart
+
+apt-get install mysql-server mysql-client php5-mysql phpmyadmin
+
+a dialog pops up for you to set a password on the root mysql user
+a second dialog will pop up to confirm there were no typos or give you the opportunity to enter identical typos which is another way to look at it.
+
+next you will be asked for the password you just entered
+
+after that you will be asked for a password to use with phpmyadmin
+and lastly you will be asked to enter that phpmyadmin password to verify that password
+
+mysql_secure_installation
+
+
+----------
+
+NOTE: RUNNING ALL PARTS OF THIS SCRIPT IS RECOMMENDED FOR ALL MySQL
+      SERVERS IN PRODUCTION USE!  PLEASE READ EACH STEP CAREFULLY!
+
+
+In order to log into MySQL to secure it, we'll need the current
+password for the root user.  If you've just installed MySQL, and
+you haven't set the root password yet, the password will be blank,
+so you should just press enter here.
+
+Enter current password for root (enter for none): 
+OK, successfully used password, moving on...
+
+Setting the root password ensures that nobody can log into the MySQL
+root user without the proper authorisation.
+
+You already have a root password set, so you can safely answer 'n'.
+
+Change the root password? [Y/n] n
+ ... skipping.
+
+By default, a MySQL installation has an anonymous user, allowing anyone
+to log into MySQL without having to have a user account created for
+them.  This is intended only for testing, and to make the installation
+go a bit smoother.  You should remove them before moving into a
+production environment.
+
+Remove anonymous users? [Y/n] Y 
+ ... Success!
+
+Normally, root should only be allowed to connect from 'localhost'.  This
+ensures that someone cannot guess at the root password from the network.
+
+Disallow root login remotely? [Y/n] Y
+ ... Success!
+
+By default, MySQL comes with a database named 'test' that anyone can
+access.  This is also intended only for testing, and should be removed
+before moving into a production environment.
+
+Remove test database and access to it? [Y/n] Y
+ - Dropping test database...
+ ... Success!
+ - Removing privileges on test database...
+ ... Success!
+
+Reloading the privilege tables will ensure that all changes made so far
+will take effect immediately.
+
+Reload privilege tables now? [Y/n] Y
+ ... Success!
+
+Cleaning up...
+
+
+
+All done!  If you've completed all of the above steps, your MySQL
+installation should now be secure.
+
+Thanks for using MySQL!
+
+---------
+
+mysql -uroot -p
+
+USE mysql
+
+
+A common vector is to attack the MySQL root user since it is the default omipotent user put on almost all MySQL installs.
+So, give your 'root' user a different name. (Is admin more secure than root, meh. Yeah, I guess.)
+
+
+GRANT ALL PRIVILEGES ON *.* TO 'admin'@'localhost' IDENTIFIED BY 'pwork' WITH GRANT OPTION;
+GRANT ALL PRIVILEGES ON *.* TO 'admin'@'127.0.0.1' IDENTIFIED BY 'pwork' WITH GRANT OPTION;
+GRANT ALL PRIVILEGES ON *.* TO 'admin'@'::1' IDENTIFIED BY 'pwork' WITH GRANT OPTION;
+
+GRANT ALL PRIVILEGES ON * TO 'admin'@'localhost' IDENTIFIED BY 'pwork' WITH GRANT OPTION;
+GRANT ALL PRIVILEGES ON * TO 'admin'@'127.0.0.1' IDENTIFIED BY 'pwork' WITH GRANT OPTION;
+GRANT ALL PRIVILEGES ON * TO 'admin'@'::1' IDENTIFIED BY 'pwork' WITH GRANT OPTION;
+
+
+DELETE FROM user WHERE User='root';
+
+
+CREATE USER 'backup'@'localhost' IDENTIFIED BY 'password';
+GRANT SELECT, SHOW VIEW, RELOAD, REPLICATION CLIENT, EVENT, TRIGGER ON *.* TO 'backup'@'localhost';
+
+
+
+So, the debian-sys-maint user is used by a lot of stuff. And it would serve to break more than I can justify it saves. I fundamentally disagree with the debian-sys-maint user, but that is the mumblings of a first class nobody-significant.
+
+Do nothing with the debian-sys-maint user. :(
+
+FLUSH PRIVILEGES;
+
+
+This is my /etc/mysql/debian-start file
+
+vi /etc/mysql/debian-start
+
+----------
+
+#!/bin/bash
+#
+# This script is executed by "/etc/init.d/mysql" on every (re)start.
+#
+# Changes to this file will be preserved when updating the Debian package.
+#
+
+source /usr/share/mysql/debian-start.inc.sh
+
+MYSQL="/usr/bin/mysql --defaults-file=/etc/mysql/debian.cnf"
+MYADMIN="/usr/bin/mysqladmin --defaults-file=/etc/mysql/debian.cnf"
+MYUPGRADE="/usr/bin/mysql_upgrade --defaults-extra-file=/etc/mysql/debian.cnf"
+MYCHECK="/usr/bin/mysqlcheck --defaults-file=/etc/mysql/debian.cnf"
+MYCHECK_SUBJECT="WARNING: mysqlcheck has found corrupt tables"
+MYCHECK_PARAMS="--all-databases --fast --silent"
+MYCHECK_RCPT="root"
+
+# The following commands should be run when the server is up but in background
+# where they do not block the server start and in one shell instance so that
+# they run sequentially. They are supposed not to echo anything to stdout.
+# If you want to disable the check for crashed tables comment
+# "check_for_crashed_tables" out.
+# (There may be no output to stdout inside the background process!)
+#echo "Checking for tables which need an upgrade, are corrupt or were "
+#echo "not closed cleanly."
+#(
+#  upgrade_system_tables_if_necessary;
+#  check_root_accounts;
+#  check_for_crashed_tables;
+#) >&2 &
+
+exit 0
+
+----------
+
+fix the phpmyadmin configuration
+vi /etc/dbconfig-common/phpmyadmin.conf
+
+(line 50)
+dbc_dbadmin='admin'
+
+----------
+
+# automatically generated by the maintainer scripts of phpmyadmin
+# any changes you make will be preserved, though your comments
+# will be lost!  to change your settings you should edit this
+# file and then run "dpkg-reconfigure phpmyadmin"
+
+# dbc_install: configure database with dbconfig-common?
+#              set to anything but "true" to opt out of assistance
+dbc_install='true'
+
+# dbc_upgrade: upgrade database with dbconfig-common?
+#              set to anything but "true" to opt out of assistance
+dbc_upgrade='true'
+
+# dbc_remove: deconfigure database with dbconfig-common?
+#             set to anything but "true" to opt out of assistance
+dbc_remove=''
+
+# dbc_dbtype: type of underlying database to use
+#       this exists primarily to let dbconfig-common know what database
+#       type to use when a package supports multiple database types.
+#       don't change this value unless you know for certain that this
+#       package supports multiple database types
+dbc_dbtype='mysql'
+
+# dbc_dbuser: database user
+#       the name of the user who we will use to connect to the database.
+dbc_dbuser='phpmyadmin'
+
+# dbc_dbpass: database user password
+#       the password to use with the above username when connecting
+#       to a database, if one is required
+dbc_dbpass='pwork'
+
+# dbc_dbserver: database host.
+#       leave unset to use localhost (or a more efficient local method
+#       if it exists).
+dbc_dbserver=''
+
+# dbc_dbport: remote database port
+#       leave unset to use the default.  only applicable if you are
+#       using a remote database.
+dbc_dbport=''
+
+# dbc_dbname: name of database
+#       this is the name of your application's database.
+dbc_dbname='phpmyadmin'
+
+# dbc_dbadmin: name of the administrative user
+#       this is the administrative user that is used to create all of the above
+dbc_dbadmin='admin'
+
+# dbc_basepath: base directory to hold database files
+#       leave unset to use the default.  only applicable if you are
+#       using a local (filesystem based) database.
+dbc_basepath=''
+
+##
+## postgresql specific settings.  if you don't use postgresql,
+## you can safely ignore all of these
+##
+
+# dbc_ssl: should we require ssl?
+#       set to "true" to require that connections use ssl
+dbc_ssl=''
+
+# dbc_authmethod_admin: authentication method for admin
+# dbc_authmethod_user: authentication method for dbuser
+#       see the section titled "AUTHENTICATION METHODS" in
+#       /usr/share/doc/dbconfig-common/README.pgsql for more info
+dbc_authmethod_admin=''
+dbc_authmethod_user=''
+
+##
+## end postgresql specific settings
+##
+
+----------
+
+install git version control
+apt-get install git
+
+install and set the access rights for the restricted shell for users
+apt-get install rssh
+vi /etc/rssh.conf
+
+----------
+
+# This is the default rssh config file
+
+# set the log facility.  "LOG_USER" and "user" are equivalent.
+logfacility = LOG_USER
+
+# Leave these all commented out to make the default action for rssh to lock
+# users out completely...
+
+#allowscp
+allowsftp # Uncomment to allow SFTP
+#allowcvs
+#allowrdist
+#allowrsync
+#allowsvnserve
+
+# set the default umask
+umask = 022
+
+# If you want to chroot users, use this to set the directory where the root of
+# the chroot jail will be located.
+#
+# if you DO NOT want to chroot users, LEAVE THIS COMMENTED OUT.
+# chrootpath = /usr/local/chroot
+
+# You can quote anywhere, but quotes not required unless the path contains a
+# space... as in this example.
+#chrootpath = "/usr/local/my chroot"
+
+##########################################
+# EXAMPLES of configuring per-user options
+
+#user=rudy:077:000100:  # the path can simply be left out to not chroot
+#user=rudy:077:000100   # the ending colon is optional
+
+#user=rudy:011:001000:  # cvs, with no chroot
+#user=rudy:011:010000:  # rdist, with no chroot
+#user=rudy:011:100000:  # rsync, with no chroot
+#user=rudy:011:000001:  # svnserve, with no chroot
+#user="rudy:011:000010:/usr/local/chroot"  # whole user string can be quoted
+#user=rudy:01"1:000010:/usr/local/chroot"  # or somewhere in the middle, freak!
+#user=rudy:'011:000010:/usr/local/chroot'  # single quotes too
+
+# if your chroot_path contains spaces, it must be quoted...
+# In the following examples, the chroot_path is "/usr/local/my chroot"
+#user=rudy:011:000100:"/usr/local/my chroot"  # sftp with chroot
+#user=rudy:011:000110:"/usr/local/my chroot"  # both with chroot
+
+# Spaces before or after the '=' are fine, but spaces in chrootpath need
+# quotes.
+#user = "rudy:011:000010:/usr/local/my chroot"
+#user = "rudy:011:000010:/usr/local/my chroot"  # neither do comments at line end
+
+----------
+
+
+install better system administration auditing tools
+apt-get install auditd
+
+install and configure selinux (the same level of security DoD requires for many government machines)
+
+apt-get install selinux-basics
+
+----------
+
+root@wheezy:~# apt-get install selinux-basics
+Reading package lists... Done
+Building dependency tree       
+Reading state information... Done
+The following packages were automatically installed and are no longer required:
+  cpp-4.4 cups-driver-gutenprint foomatic-filters-ppds libbluetooth3 libfont-freetype-perl
+  libgmp3c2 libgs8 libjpeg62 libnl1 libpoppler5 libsysfs2 libxcb-render-util0 libxfont1
+  min12xxw pnm2ppa xfonts-encodings xfonts-utils xli
+Use 'apt-get autoremove' to remove them.
+The following extra packages will be installed:
+  bwidget checkpolicy libapol4 libaudit0 libdrm-intel1 libdrm-nouveau1a libdrm-radeon1
+  libdrm2 libgl1-mesa-dri libgl1-mesa-glx libglapi-mesa libqpol1 libsetools-tcl libutempter0
+  libx11-xcb1 libxcb-glx0 libxcb-shape0 libxss1 libxtst6 libxv1 libxxf86dga1 policycoreutils
+  python-ipy python-selinux python-semanage python-sepolgen python-setools
+  selinux-policy-default selinux-utils setools tcl tcl8.5 tk tk8.5 x11-utils xbitmaps xterm
+Suggested packages:
+  libglide3 selinux-policy-dev logcheck syslog-summary tcl-tclreadline mesa-utils
+  xfonts-cyrillic
+The following NEW packages will be installed:
+  bwidget checkpolicy libapol4 libaudit0 libdrm-intel1 libdrm-nouveau1a libdrm-radeon1
+  libdrm2 libgl1-mesa-dri libgl1-mesa-glx libglapi-mesa libqpol1 libsetools-tcl libutempter0
+  libx11-xcb1 libxcb-glx0 libxcb-shape0 libxss1 libxtst6 libxv1 libxxf86dga1 policycoreutils
+  python-ipy python-selinux python-semanage python-sepolgen python-setools selinux-basics
+  selinux-policy-default selinux-utils setools tcl tcl8.5 tk tk8.5 x11-utils xbitmaps xterm
+0 upgraded, 38 newly installed, 0 to remove and 0 not upgraded.
+Need to get 36.9 MB of archives.
+After this operation, 171 MB of additional disk space will be used.
+Do you want to continue [Y/n]? y
+Get:1 http://ftp.debian.org/debian/ testing/main libqpol1 amd64 3.3.7-3 [222 kB]
+Get:2 http://ftp.debian.org/debian/ testing/main libapol4 amd64 3.3.7-3 [113 kB]
+Get:3 http://ftp.debian.org/debian/ testing/main libdrm2 amd64 2.4.33-3 [444 kB]
+Get:4 http://ftp.debian.org/debian/ testing/main libdrm-intel1 amd64 2.4.33-3 [478 kB]
+Get:5 http://ftp.debian.org/debian/ testing/main libdrm-nouveau1a amd64 2.4.33-3 [433 kB]
+Get:6 http://ftp.debian.org/debian/ testing/main libdrm-radeon1 amd64 2.4.33-3 [440 kB]
+Get:7 http://ftp.debian.org/debian/ testing/main libglapi-mesa amd64 8.0.5-3 [46.6 kB]
+Get:8 http://ftp.debian.org/debian/ testing/main libx11-xcb1 amd64 2:1.5.0-1 [139 kB]
+Get:9 http://ftp.debian.org/debian/ testing/main libxcb-glx0 amd64 1.8.1-2 [32.1 kB]
+Get:10 http://ftp.debian.org/debian/ testing/main libgl1-mesa-glx amd64 8.0.5-3 [134 kB]
+Get:11 http://ftp.debian.org/debian/ testing/main libxcb-shape0 amd64 1.8.1-2 [11.0 kB]
+Get:12 http://ftp.debian.org/debian/ testing/main libxss1 amd64 1:1.2.2-1 [17.5 kB]
+Get:13 http://ftp.debian.org/debian/ testing/main libxtst6 amd64 2:1.2.1-1 [26.6 kB]
+Get:14 http://ftp.debian.org/debian/ testing/main libxv1 amd64 2:1.0.7-1 [21.6 kB]
+Get:15 http://ftp.debian.org/debian/ testing/main libxxf86dga1 amd64 2:1.1.3-2 [22.6 kB]
+Get:16 http://ftp.debian.org/debian/ testing/main python-ipy all 1:0.75-1 [31.4 kB]
+Get:17 http://ftp.debian.org/debian/ testing/main python-selinux amd64 2.1.9-5 [365 kB]
+Get:18 http://ftp.debian.org/debian/ testing/main python-semanage amd64 2.1.6-6 [128 kB]     
+Get:19 http://ftp.debian.org/debian/ testing/main python-setools amd64 3.3.7-3 [511 kB]      
+Get:20 http://ftp.debian.org/debian/ testing/main python-sepolgen all 1.1.5-3 [77.0 kB]      
+Get:21 http://ftp.debian.org/debian/ testing/main libaudit0 amd64 1:1.7.18-1.1 [68.2 kB]     
+Get:22 http://ftp.debian.org/debian/ testing/main policycoreutils amd64 2.1.10-9 [614 kB]    
+Get:23 http://ftp.debian.org/debian/ testing/main tcl8.5 amd64 8.5.11-2 [1,627 kB]           
+Get:24 http://ftp.debian.org/debian/ testing/main tk8.5 amd64 8.5.11-2 [1,189 kB]            
+Get:25 http://ftp.debian.org/debian/ testing/main tcl all 8.5.0-2 [4,636 B]                  
+Get:26 http://ftp.debian.org/debian/ testing/main tk all 8.5.0-2 [4,674 B]                   
+Get:27 http://ftp.debian.org/debian/ testing/main bwidget all 1.9.5-1 [240 kB]               
+Get:28 http://ftp.debian.org/debian/ testing/main checkpolicy amd64 2.1.8-2 [287 kB]         
+Get:29 http://ftp.debian.org/debian/ testing/main libgl1-mesa-dri amd64 8.0.5-3 [21.8 MB]    
+Get:30 http://ftp.debian.org/debian/ testing/main libsetools-tcl amd64 3.3.7-3 [638 kB]      
+Get:31 http://ftp.debian.org/debian/ testing/main libutempter0 amd64 1.1.5-4 [8,020 B]       
+Get:32 http://ftp.debian.org/debian/ testing/main selinux-utils amd64 2.1.9-5 [87.3 kB]      
+Get:33 http://ftp.debian.org/debian/ testing/main selinux-basics all 0.5.0 [15.5 kB]         
+Get:34 http://ftp.debian.org/debian/ testing/main selinux-policy-default all 2:2.20110726-12 [4,302 kB]
+Get:35 http://ftp.debian.org/debian/ testing/main setools amd64 3.3.7-3 [1,418 kB]           
+Get:36 http://ftp.debian.org/debian/ testing/main x11-utils amd64 7.7~1 [233 kB]             
+Get:37 http://ftp.debian.org/debian/ testing/main xbitmaps all 1.1.1-1 [31.8 kB]             
+Get:38 http://ftp.debian.org/debian/ testing/main xterm amd64 278-4 [613 kB]                 
+Fetched 36.9 MB in 19s (1,855 kB/s)                                                          
+Extracting templates from packages: 100%
+Selecting previously unselected package libqpol1:amd64.
+(Reading database ... 55095 files and directories currently installed.)
+Unpacking libqpol1:amd64 (from .../libqpol1_3.3.7-3_amd64.deb) ...
+Selecting previously unselected package libapol4:amd64.
+Unpacking libapol4:amd64 (from .../libapol4_3.3.7-3_amd64.deb) ...
+Selecting previously unselected package libdrm2:amd64.
+Unpacking libdrm2:amd64 (from .../libdrm2_2.4.33-3_amd64.deb) ...
+Selecting previously unselected package libdrm-intel1:amd64.
+Unpacking libdrm-intel1:amd64 (from .../libdrm-intel1_2.4.33-3_amd64.deb) ...
+Selecting previously unselected package libdrm-nouveau1a:amd64.
+Unpacking libdrm-nouveau1a:amd64 (from .../libdrm-nouveau1a_2.4.33-3_amd64.deb) ...
+Selecting previously unselected package libdrm-radeon1:amd64.
+Unpacking libdrm-radeon1:amd64 (from .../libdrm-radeon1_2.4.33-3_amd64.deb) ...
+Selecting previously unselected package libglapi-mesa:amd64.
+Unpacking libglapi-mesa:amd64 (from .../libglapi-mesa_8.0.5-3_amd64.deb) ...
+Selecting previously unselected package libx11-xcb1:amd64.
+Unpacking libx11-xcb1:amd64 (from .../libx11-xcb1_2%3a1.5.0-1_amd64.deb) ...
+Selecting previously unselected package libxcb-glx0:amd64.
+Unpacking libxcb-glx0:amd64 (from .../libxcb-glx0_1.8.1-2_amd64.deb) ...
+Selecting previously unselected package libgl1-mesa-glx:amd64.
+Unpacking libgl1-mesa-glx:amd64 (from .../libgl1-mesa-glx_8.0.5-3_amd64.deb) ...
+Selecting previously unselected package libxcb-shape0:amd64.
+Unpacking libxcb-shape0:amd64 (from .../libxcb-shape0_1.8.1-2_amd64.deb) ...
+Selecting previously unselected package libxss1:amd64.
+Unpacking libxss1:amd64 (from .../libxss1_1%3a1.2.2-1_amd64.deb) ...
+Selecting previously unselected package libxtst6:amd64.
+Unpacking libxtst6:amd64 (from .../libxtst6_2%3a1.2.1-1_amd64.deb) ...
+Selecting previously unselected package libxv1:amd64.
+Unpacking libxv1:amd64 (from .../libxv1_2%3a1.0.7-1_amd64.deb) ...
+Selecting previously unselected package libxxf86dga1:amd64.
+Unpacking libxxf86dga1:amd64 (from .../libxxf86dga1_2%3a1.1.3-2_amd64.deb) ...
+Selecting previously unselected package python-ipy.
+Unpacking python-ipy (from .../python-ipy_1%3a0.75-1_all.deb) ...
+Selecting previously unselected package python-selinux.
+Unpacking python-selinux (from .../python-selinux_2.1.9-5_amd64.deb) ...
+Selecting previously unselected package python-semanage.
+Unpacking python-semanage (from .../python-semanage_2.1.6-6_amd64.deb) ...
+Selecting previously unselected package python-setools.
+Unpacking python-setools (from .../python-setools_3.3.7-3_amd64.deb) ...
+Selecting previously unselected package python-sepolgen.
+Unpacking python-sepolgen (from .../python-sepolgen_1.1.5-3_all.deb) ...
+Selecting previously unselected package libaudit0.
+Unpacking libaudit0 (from .../libaudit0_1%3a1.7.18-1.1_amd64.deb) ...
+Selecting previously unselected package policycoreutils.
+Unpacking policycoreutils (from .../policycoreutils_2.1.10-9_amd64.deb) ...
+Selecting previously unselected package tcl8.5.
+Unpacking tcl8.5 (from .../tcl8.5_8.5.11-2_amd64.deb) ...
+Selecting previously unselected package tk8.5.
+Unpacking tk8.5 (from .../tk8.5_8.5.11-2_amd64.deb) ...
+Selecting previously unselected package tcl.
+Unpacking tcl (from .../archives/tcl_8.5.0-2_all.deb) ...
+Selecting previously unselected package tk.
+Unpacking tk (from .../archives/tk_8.5.0-2_all.deb) ...
+Selecting previously unselected package bwidget.
+Unpacking bwidget (from .../bwidget_1.9.5-1_all.deb) ...
+Selecting previously unselected package checkpolicy.
+Unpacking checkpolicy (from .../checkpolicy_2.1.8-2_amd64.deb) ...
+Selecting previously unselected package libgl1-mesa-dri:amd64.
+Unpacking libgl1-mesa-dri:amd64 (from .../libgl1-mesa-dri_8.0.5-3_amd64.deb) ...
+Selecting previously unselected package libsetools-tcl.
+Unpacking libsetools-tcl (from .../libsetools-tcl_3.3.7-3_amd64.deb) ...
+Selecting previously unselected package libutempter0.
+Unpacking libutempter0 (from .../libutempter0_1.1.5-4_amd64.deb) ...
+Selecting previously unselected package selinux-utils.
+Unpacking selinux-utils (from .../selinux-utils_2.1.9-5_amd64.deb) ...
+Selecting previously unselected package selinux-basics.
+Unpacking selinux-basics (from .../selinux-basics_0.5.0_all.deb) ...
+Selecting previously unselected package selinux-policy-default.
+Unpacking selinux-policy-default (from .../selinux-policy-default_2%3a2.20110726-12_all.deb) ...
+Selecting previously unselected package setools.
+Unpacking setools (from .../setools_3.3.7-3_amd64.deb) ...
+Selecting previously unselected package x11-utils.
+Unpacking x11-utils (from .../x11-utils_7.7~1_amd64.deb) ...
+Selecting previously unselected package xbitmaps.
+Unpacking xbitmaps (from .../xbitmaps_1.1.1-1_all.deb) ...
+Selecting previously unselected package xterm.
+Unpacking xterm (from .../archives/xterm_278-4_amd64.deb) ...
+Processing triggers for man-db ...
+Setting up libqpol1:amd64 (3.3.7-3) ...
+Setting up libapol4:amd64 (3.3.7-3) ...
+Setting up libdrm2:amd64 (2.4.33-3) ...
+Setting up libdrm-intel1:amd64 (2.4.33-3) ...
+Setting up libdrm-nouveau1a:amd64 (2.4.33-3) ...
+Setting up libdrm-radeon1:amd64 (2.4.33-3) ...
+Setting up libglapi-mesa:amd64 (8.0.5-3) ...
+Setting up libx11-xcb1:amd64 (2:1.5.0-1) ...
+Setting up libxcb-glx0:amd64 (1.8.1-2) ...
+Setting up libgl1-mesa-glx:amd64 (8.0.5-3) ...
+Setting up libxcb-shape0:amd64 (1.8.1-2) ...
+Setting up libxss1:amd64 (1:1.2.2-1) ...
+Setting up libxtst6:amd64 (2:1.2.1-1) ...
+Setting up libxv1:amd64 (2:1.0.7-1) ...
+Setting up libxxf86dga1:amd64 (2:1.1.3-2) ...
+Setting up python-ipy (1:0.75-1) ...
+Setting up python-selinux (2.1.9-5) ...
+Setting up python-semanage (2.1.6-6) ...
+Setting up python-setools (3.3.7-3) ...
+Setting up python-sepolgen (1.1.5-3) ...
+Setting up libaudit0 (1:1.7.18-1.1) ...
+Setting up policycoreutils (2.1.10-9) ...
+Setting up tcl8.5 (8.5.11-2) ...
+update-alternatives: using /usr/bin/tclsh8.5 to provide /usr/bin/tclsh (tclsh) in auto mode
+Setting up tk8.5 (8.5.11-2) ...
+update-alternatives: using /usr/bin/wish8.5 to provide /usr/bin/wish (wish) in auto mode
+Setting up tcl (8.5.0-2) ...
+update-alternatives: using /usr/bin/tclsh-default to provide /usr/bin/tclsh (tclsh) in auto mode
+Setting up tk (8.5.0-2) ...
+update-alternatives: using /usr/bin/wish-default to provide /usr/bin/wish (wish) in auto mode
+Setting up bwidget (1.9.5-1) ...
+Setting up checkpolicy (2.1.8-2) ...
+Setting up libgl1-mesa-dri:amd64 (8.0.5-3) ...
+Setting up libsetools-tcl (3.3.7-3) ...
+Setting up libutempter0 (1.1.5-4) ...
+Creating utempter group...
+Setting up selinux-utils (2.1.9-5) ...
+Setting up selinux-basics (0.5.0) ...
+Generating grub.cfg ...
+Found linux image: /boot/vmlinuz-3.2.0-4-amd64
+Found initrd image: /boot/initrd.img-3.2.0-4-amd64
+Found linux image: /boot/vmlinuz-2.6.32-5-amd64
+Found initrd image: /boot/initrd.img-2.6.32-5-amd64
+done
+Setting up selinux-policy-default (2:2.20110726-12) ...
+Notice: Trying to link (but not load) a default policy.
+This process may fail -- you should check the results, and 
+you need to switch to this policy yourself anyway.
+
+Locating modules
+Ordering modules based on dependencies
+Selecting modules based on installed packages
+Loaded modules  apache dbus netutils ssh devicekit lpd cups remotelogin telnet xserver xscreensaver exim apm avahi cpufreqselector pythonsupport rpc dmidecode mysql policykit portmap vbetool tcpd ftp screen dhcp consolekit lvm lda tzdata rpcbind bluetooth gpg ptchown usbmodules java pcmcia
+Setting up setools (3.3.7-3) ...
+Setting up x11-utils (7.7~1) ...
+Setting up xbitmaps (1.1.1-1) ...
+Setting up xterm (278-4) ...
+update-alternatives: using /usr/bin/xterm to provide /usr/bin/x-terminal-emulator (x-terminal-emulator) in auto mode
+update-alternatives: using /usr/bin/uxterm to provide /usr/bin/x-terminal-emulator (x-terminal-emulator) in auto mode
+update-alternatives: using /usr/bin/lxterm to provide /usr/bin/x-terminal-emulator (x-terminal-emulator) in auto mode
+
+---------
+
+selinux-activate
+
+Fix the domain of PID 1 error lines
+vi /etc/udev/udev.conf
+
+---------
+
+# The initial syslog(3) priority: "err", "info", "debug" or its
+# numerical equivalent. For runtime debugging, the daemons internal
+# state can be changed with: "udevadm control --log-priority=<value>".
+#
+# udevd is started in the initramfs, so when this file is modified the
+# initramfs should be rebuilt.
+udev_log="err"
+
+no_static_dev="1"
+
+----------
+
+update-initramfs -k all -u
+
+
+set FIXFSCK in /etc/default/rcS
+vi /etc/default/rcS
+
+----------
+
+#
+# /etc/default/rcS
+#
+# Default settings for the scripts in /etc/rcS.d/
+#
+# For information about these variables see the rcS(5) manual page.
+#
+# This file belongs to the "initscripts" package.
+
+# delete files in /tmp during boot older than x days.
+# '0' means always, -1 or 'infinite' disables the feature
+#TMPTIME=0
+
+# spawn sulogin during boot, continue normal boot if not used in 30 seconds
+#SULOGIN=no
+
+# do not allow users to log in until the boot has completed
+#DELAYLOGIN=no
+
+# be more verbose during the boot process
+#VERBOSE=no
+
+# automatically repair filesystems with inconsistencies during boot
+
+FSCKFIX=yes
+
+
+---------
+
+reboot
+
+~~~~~Automatic reboot~~~~~
+
+~~~~~Note: the /etc/pam.d/login error is due to an error in the check-selinux-installation script~~~~~
+
+~~~~~Add PHPMyAdmin to default-ssl~~~~~
+
+---At this point, the base configuration is complete---
+
+add a user
+adduser username
+
+Password
+Password
+Fullname
+Room Number
+Work Phone
+Home Phone
+Other
+Is the information correct
+
+~~~~~Plan A~~~~~
+
+give user restricted shell access
+usermod -s /usr/bin/rssh username
+
+chroot the user
+vi /etc/rssh.conf
+
+----------
+
+----------
+
+~~~~~End Plan A~~~~~
+
+~~~~~Plan B~~~~~
+
+give user restricted shell access
+usermod -s /usr/bin/rssh username
+
+chroot the user
+give mkdir, rmdir, mv, cp, and rm
+give mysql and git
+
+
+~~~~~End Plan B~~~~~
+
+~~~~~Plan C~~~~~
+using sftponly shell
+vi /etc/passwd
+change /bin/bash to /usr/lib/sftp-server
+~~~~~End Plan C~~~~~
+
+
+
+set up directory structure
+cd /home/username
+mkdir hostname.tld
+cd hostname.tld
+mkdir http
+mkdir https
+mkdir certs
+mkdir logs
+
+change the ownership and access permissions
+cd ..
+chown -R username:www-data *
+chmod -R 775 *
+
+add sticky bits
+chmod -R u+s *
+chmod -R g+s *
+
+create sites available for the new websites
+
+vi /etc/apache2/sites-available/hostname.tld
+
+my /etc/apache2/sites-available/hostname.tld reads as follows:
+
+<VirtualHost *:80>
+        ServerAdmin webmaster@localhost
+
+        DocumentRoot /home/username/hostname.tld/http
+        ServerName hostname.tld
+        <Directory />
+                Options FollowSymLinks
+                AllowOverride All
+        </Directory>
+        <Directory /home/username/hostname.tld/http/>
+                Options Indexes FollowSymLinks MultiViews
+                AllowOverride None
+                Order allow,deny
+                allow from all
+        </Directory>
+
+        ScriptAlias /cgi-bin/ /usr/lib/cgi-bin/
+        <Directory "/usr/lib/cgi-bin">
+                AllowOverride None
+                Options +ExecCGI -MultiViews +SymLinksIfOwnerMatch
+                Order allow,deny
+                Allow from all
+        </Directory>
+
+	ErrorLog /home/username/hostname.tld/logs/error_log
+
+	# Possible values include: debug, info, notice, warn, error, crit,
+	# alert, emerg.
+	LogLevel warn
+
+	CustomLog /home/username/hostname.tld/logs/access_log combined
+</VirtualHost>
+
+
+likewise modify your default-ssl virtual host configuration
+vi /etc/apache2/sites-available/hostname.tld-ssl
+
+my /etc/apache2/sites-available/hostname.tld-ssl reads as follows:
+
+<IfModule mod_ssl.c>
+<VirtualHost _default_:443>
+        ServerAdmin webmaster@localhost
+
+        DocumentRoot /home/username/hostname.tld/https
+        ServerName hostname.tld
+        <Directory />
+                Options FollowSymLinks
+                AllowOverride All
+        </Directory>
+        <Directory /home/username/hostname.tld/https/>
+                Options Indexes FollowSymLinks MultiViews
+                AllowOverride None
+                Order allow,deny
+                allow from all
+        </Directory>
+
+        ScriptAlias /cgi-bin/ /usr/lib/cgi-bin/
+        <Directory "/usr/lib/cgi-bin">
+                AllowOverride None
+                Options +ExecCGI -MultiViews +SymLinksIfOwnerMatch
+                Order allow,deny
+                Allow from all
+        </Directory>
+
+	ErrorLog /home/username/hostname.tld/logs/ssl_error_log
+
+	# Possible values include: debug, info, notice, warn, error, crit,
+	# alert, emerg.
+	LogLevel warn
+
+	CustomLog /home/username/hostname.tld/logs/ssl_access_log combined
+
+        #   SSL Engine Switch:
+        #   Enable/Disable SSL for this virtual host.
+        SSLEngine on
+
+        #   A self-signed (snakeoil) certificate can be created by installing
+        #   the ssl-cert package. See
+        #   /usr/share/doc/apache2.2-common/README.Debian.gz for more info.
+        #   If both key and certificate are stored in the same file, only the
+        #   SSLCertificateFile directive is needed.
+        SSLCertificateFile    /home/username/hostname.tld/certs/ssl-cert-snakeoil.pem
+        SSLCertificateKeyFile /home/username/hostname.tld/certs/ssl-cert-snakeoil.key
+
+        #   Server Certificate Chain:
+        #   Point SSLCertificateChainFile at a file containing the
+        #   concatenation of PEM encoded CA certificates which form the
+        #   certificate chain for the server certificate. Alternatively
+        #   the referenced file can be the same as SSLCertificateFile
+        #   when the CA certificates are directly appended to the server
+        #   certificate for convinience.
+        #SSLCertificateChainFile /home/username/hostname.tld/certs/server-ca.crt
+
+        #   Certificate Authority (CA):
+        #   Set the CA certificate verification path where to find CA
+        #   certificates for client authentication or alternatively one
+        #   huge file containing all of them (file must be PEM encoded)
+        #   Note: Inside SSLCACertificatePath you need hash symlinks
+        #         to point to the certificate files. Use the provided
+        #         Makefile to update the hash symlinks after changes.
+        #SSLCACertificatePath /home/username/hostname.tld/certs/
+        #SSLCACertificateFile /home/username/hostname.tld/certs/ca-bundle.crt
+
+        #   Certificate Revocation Lists (CRL):
+        #   Set the CA revocation path where to find CA CRLs for client
+        #   authentication or alternatively one huge file containing all
+        #   of them (file must be PEM encoded)
+        #   Note: Inside SSLCARevocationPath you need hash symlinks
+        #         to point to the certificate files. Use the provided
+        #         Makefile to update the hash symlinks after changes.
+        #SSLCARevocationPath /home/username/hostname.tld/certs/
+        #SSLCARevocationFile /home/username/hostname.tld/certs/ca-bundle.crl
+
+        #   Client Authentication (Type):
+        #   Client certificate verification type and depth.  Types are
+        #   none, optional, require and optional_no_ca.  Depth is a
+        #   number which specifies how deeply to verify the certificate
+        #   issuer chain before deciding the certificate is not valid.
+        #SSLVerifyClient require
+        #SSLVerifyDepth  10
+
+        #   Access Control:
+        #   With SSLRequire you can do per-directory access control based
+        #   on arbitrary complex boolean expressions containing server
+        #   variable checks and other lookup directives.  The syntax is a
+        #   mixture between C and Perl.  See the mod_ssl documentation
+        #   for more details.
+        #<Location />
+        #SSLRequire (    %{SSL_CIPHER} !~ m/^(EXP|NULL)/ \
+        #            and %{SSL_CLIENT_S_DN_O} eq "Snake Oil, Ltd." \
+        #            and %{SSL_CLIENT_S_DN_OU} in {"Staff", "CA", "Dev"} \
+        #            and %{TIME_WDAY} >= 1 and %{TIME_WDAY} <= 5 \
+        #            and %{TIME_HOUR} >= 8 and %{TIME_HOUR} <= 20       ) \
+        #           or %{REMOTE_ADDR} =~ m/^192\.76\.162\.[0-9]+$/
+        #</Location>
+
+        #   SSL Engine Options:
+        #   Set various options for the SSL engine.
+        #   o FakeBasicAuth:
+        #     Translate the client X.509 into a Basic Authorisation.  This means that
+        #     the standard Auth/DBMAuth methods can be used for access control.  The
+        #     user name is the `one line' version of the client's X.509 certificate.
+        #     Note that no password is obtained from the user. Every entry in the user
+        #     file needs this password: `xxj31ZMTZzkVA'.
+        #   o ExportCertData:
+        #     This exports two additional environment variables: SSL_CLIENT_CERT and
+        #     SSL_SERVER_CERT. These contain the PEM-encoded certificates of the
+        #     server (always existing) and the client (only existing when client
+        #     authentication is used). This can be used to import the certificates
+        #     into CGI scripts.
+        #   o StdEnvVars:
+        #     This exports the standard SSL/TLS related `SSL_*' environment variables.
+        #     Per default this exportation is switched off for performance reasons,
+        #     because the extraction step is an expensive operation and is usually
+        #     useless for serving static content. So one usually enables the
+        #     exportation for CGI and SSI requests only.
+        #   o StrictRequire:
+        #     This denies access when "SSLRequireSSL" or "SSLRequire" applied even
+        #     under a "Satisfy any" situation, i.e. when it applies access is denied
+        #     and no other module can change it.
+        #   o OptRenegotiate:
+        #     This enables optimized SSL connection renegotiation handling when SSL
+        #     directives are used in per-directory context.
+        #SSLOptions +FakeBasicAuth +ExportCertData +StrictRequire
+        <FilesMatch "\.(cgi|shtml|phtml|php)$">
+                SSLOptions +StdEnvVars
+        </FilesMatch>
+        <Directory /usr/lib/cgi-bin>
+                SSLOptions +StdEnvVars
+        </Directory>
+
+        #   SSL Protocol Adjustments:
+        #   The safe and default but still SSL/TLS standard compliant shutdown
+        #   approach is that mod_ssl sends the close notify alert but doesn't wait for
+        #   the close notify alert from client. When you need a different shutdown
+        #   approach you can use one of the following variables:
+        #   o ssl-unclean-shutdown:
+        #     This forces an unclean shutdown when the connection is closed, i.e. no
+        #     SSL close notify alert is send or allowed to received.  This violates
+        #     the SSL/TLS standard but is needed for some brain-dead browsers. Use
+        #     this when you receive I/O errors because of the standard approach where
+        #     mod_ssl sends the close notify alert.
+        #   o ssl-accurate-shutdown:
+        #     This forces an accurate shutdown when the connection is closed, i.e. a
+        #     SSL close notify alert is send and mod_ssl waits for the close notify
+        #     alert of the client. This is 100% SSL/TLS standard compliant, but in
+        #     practice often causes hanging connections with brain-dead browsers. Use
+        #     this only for browsers where you know that their SSL implementation
+        #     works correctly.
+        #   Notice: Most problems of broken clients are also related to the HTTP
+        #   keep-alive facility, so you usually additionally want to disable
+        #   keep-alive for those clients, too. Use variable "nokeepalive" for this.
+        #   Similarly, one has to force some clients to use HTTP/1.0 to workaround
+        #   their broken HTTP/1.1 implementation. Use variables "downgrade-1.0" and
+        #   "force-response-1.0" for this.
+        BrowserMatch "MSIE [2-6]" \
+                nokeepalive ssl-unclean-shutdown \
+                downgrade-1.0 force-response-1.0
+        # MSIE 7 and newer should be able to use keepalive
+        BrowserMatch "MSIE [17-9]" ssl-unclean-shutdown
+
+</VirtualHost>
+</IfModule>
+
+enable the website
+
+a2ensite hostname.tld
+
+
+create self-signed certificate
+cd /home/username/hostname/certs
+openssl req -new -x509 -extensions v3_ca -keyout ssl-cert-snakeoil.key -out ssl-cert-snakeoil.pem -days 3650 -config /etc/ssl/openssl.cnf
+
+remove the passphrase
+mv ssl-cert-snakeoil.key ssl-cert-snakeoil.key~
+openssl rsa -in ssl-cert-snakeoil.key~ -out ssl-cert-snakeoil.key
+
+a2ensite hostname.tld-ssl
+
+mysql -uadmin -p
+
+CREATE DATABASE username;
+
+~~~~~Plan A~~~~~
+Give your user access via both of the most common ways to log in to the database for a logged in user
+GRANT ALL PRIVILEGES ON username.* TO 'username'@'localhost' IDENTIFIED BY 'password';
+GRANT ALL PRIVILEGES ON username.* TO 'username'@'127.0.0.1' IDENTIFIED BY 'password';
+
+Assuming your host has a fixed IP, you may also give access for that
+GRANT ALL PRIVILEGES ON username.* TO 'username'@'YOU.R H.OST.IP' IDENTIFIED BY 'password';
+~~~~~End Plan A~~~~~
+
+~~~~~Plan B~~~~~
+GRANT ALL PRIVILEGES ON username.* TO 'username'@'%' IDENTIFIED BY 'password';
+~~~~~End Plan B~~~~~
+
+
+
+FLUSH PRIVILEGES;
+
+EXIT
+
+
+mpm-itk
+
+///MySQL Suggested Packages
+The following extra packages will be installed:
+  libaio1 libdbd-mysql-perl libdbi-perl libhtml-template-perl libmysqlclient18
+  libnet-daemon-perl libplrpc-perl mysql-client-5.5 mysql-common mysql-server-5.5
+  mysql-server-core-5.5
+Suggested packages:
+  libipc-sharedcache-perl libterm-readkey-perl tinyca
+
+look at libapache2-mod-evasive
